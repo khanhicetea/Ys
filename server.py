@@ -32,7 +32,7 @@ class YoutubeResource:
             result = {
                 'video': {
                     'id': video_id,
-                    'thumbnail_url': 'https://img.youtube.com/vi/{}/sddefault.jpg'.format(video_id),
+                    'thumbnail_url': 'https://i1.ytimg.com/vi/{}/default.jpg'.format(video_id),
                     'title': ' '.join(video.title.split()[:TITLE_LIMIT_WORDS]),
                     'length': video.length,
                     'duration': video.duration,
