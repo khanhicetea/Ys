@@ -2,6 +2,7 @@ import falcon
 import json
 import pafy
 
+TITLE_LIMIT_WORDS = 8
 
 def serialize_audio_stream(stream):
     result = {
@@ -31,8 +32,8 @@ class YoutubeResource:
             result = {
                 'video': {
                     'id': video_id,
-                    'thumbnail_url': 'https://img.youtube.com/vi/{}/0.jpg'.format(video_id),
-                    'title': video.title,
+                    'thumbnail_url': 'https://img.youtube.com/vi/{}/sddefault.jpg'.format(video_id),
+                    'title': ' '.join(video.title.split()[:TITLE_LIMIT_WORDS]),
                     'length': video.length,
                     'duration': video.duration,
                 },
