@@ -37,7 +37,7 @@
         <div class="content">
             <ul class="table-view">
                 <li class="table-view-cell">
-                    <audio controls>
+                    <audio controls id='player'>
                         <source src="http://www.bensound.org/bensound-music/bensound-ukulele.mp3" type="audio/mp3">
                     </audio>
                 </li>
@@ -51,7 +51,7 @@
                             <button @click="down(i)" class="btn pull-right" v-if="i < (videos.length-1)">
                                 <span class="icon icon-down"></span>
                             </button>
-                            <button @click="down(i)" class="btn pull-right" v-if="i">
+                            <button @click="up(i)" class="btn pull-right" v-if="i">
                                 <span class="icon icon-up"></span>
                             </button>
                         </p>
@@ -63,19 +63,28 @@
 
     <script>
         var playing_id = null;
+        var playing_duration = 0;
         var Ys = new Vue({
             el: '#app',
             data: {
                 newVideoUrl: '',
-                videos: []
+                videos: [],
             },
             methods: {
                 swap: function(a, b) {
-                    var temp = [this.videos[a], this.videos[b]];
-                    this.videos.splice(a, 2, temp[1], temp[0]);
+                    var temp = this.videos;
+                    this.videos = [];
+                    for (var i = 0; i < a; i++) {
+                        this.videos.push(temp[i]);
+                    }
+                    this.videos.push(temp[b]);
+                    this.videos.push(temp[a]);
+                    for (var i = b + 1; i < temp.length; i++) {
+                        this.videos.push(temp[i]);
+                    }
                 },
                 up: function(index) {
-                    this.swap(index, index - 1);
+                    this.swap(index - 1, index);
                 },
                 down: function(index) {
                     this.swap(index, index + 1);
@@ -93,6 +102,7 @@
                 },
                 playAudio: function(video) {
                     playing_id = video.video.id;
+                    playing_duration = video.video.length;
                     var audios = video.audio_streams.filter(function(a) {
                         return a.extension == 'm4a';
                     });
@@ -128,8 +138,15 @@
             }
         });
 
-        var players = plyr.setup({debug: true});
+        var players = plyr.setup({debug: false});
         var audioPlayer = players[0];
+        audioPlayer.on('timeupdate', function(e) {
+            var currentTime = e.detail.plyr.getCurrentTime();
+            if (currentTime > (playing_duration + 3)) { // Fallback for mobile b/c get wrong duration
+                Ys.next();
+            }
+        });
+
         audioPlayer.on('ended', function(e) {
             Ys.next();
         });
