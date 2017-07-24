@@ -17,6 +17,8 @@
     
     <style>
         .video-img { width: 105px; height: 60px; }
+        .media-body button { margin: 0px 3px; }
+        .table-view-cell {padding: 11px 15px;}
     </style>
 </head>
 <body>
@@ -40,11 +42,19 @@
                     </audio>
                 </li>
                 <li class="table-view-cell table-view-divider">Added videos</li>
-                <li class="table-view-cell media" v-for="v in videos" @click="playAudio(v)">
-                    <img class="video-img media-object pull-left" :src="v.video.thumbnail_url">
+                <li class="table-view-cell media" v-for="(v, i) in videos">
+                    <img @click="playAudio(v)" class="video-img media-object pull-left" :src="v.video.thumbnail_url">
                     <div class="media-body">
                         {{ v.video.title }}
-                        <p><span class="icon icon-info"></span> Duration : {{ v.video.duration }}</p>
+                        <p>
+                            Duration : {{ v.video.duration }}
+                            <button @click="down(i)" class="btn pull-right" v-if="i < (videos.length-1)">
+                                <span class="icon icon-down"></span>
+                            </button>
+                            <button @click="down(i)" class="btn pull-right" v-if="i">
+                                <span class="icon icon-up"></span>
+                            </button>
+                        </p>
                     </div>
                 </li>
             </ul>
@@ -52,6 +62,7 @@
     </div>
 
     <script>
+        var playing_id = null;
         var Ys = new Vue({
             el: '#app',
             data: {
@@ -59,11 +70,33 @@
                 videos: []
             },
             methods: {
+                swap: function(a, b) {
+                    var temp = [this.videos[a], this.videos[b]];
+                    this.videos.splice(a, 2, temp[1], temp[0]);
+                },
+                up: function(index) {
+                    this.swap(index, index - 1);
+                },
+                down: function(index) {
+                    this.swap(index, index + 1);
+                },
+                next: function() {
+                    var i = 0;
+                    var count = this.videos.length;
+                    for (i = 0; i < count; i++) {
+                        if (this.videos[i].video.id == playing_id) {
+                            break;
+                        }
+                    }
+                    next_id = (i + 1) % count;
+                    this.playAudio(this.videos[next_id]);
+                },
                 playAudio: function(video) {
+                    playing_id = video.video.id;
                     var audios = video.audio_streams.filter(function(a) {
                         return a.extension == 'm4a';
                     });
-                    var playStream = audios[0]                    
+                    var playStream = audios[0];
                     audioPlayer.stop();
                     audioPlayer.source({
                         type: 'audio',
@@ -87,7 +120,7 @@
                             .then(function(res) {
                                 that.videos.push(res.data);
                                 that.newVideoUrl = '';
-                            })
+                            });
                     } else {
                         alert('Invalid Youtube URL !');
                     }
@@ -97,6 +130,9 @@
 
         var players = plyr.setup({debug: true});
         var audioPlayer = players[0];
+        audioPlayer.on('ended', function(e) {
+            Ys.next();
+        });
     </script>
 </body>
 </html>
