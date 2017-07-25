@@ -1,6 +1,6 @@
 # Ys - Youtube Streamer
 
-![Youtube Stream](https://cdn.rawgit.com/khanhicetea/Ys/master/app-icon.png)
+![Youtube Stream](https://media.giphy.com/media/9A6nyrbZpskCI/giphy.gif)
 
 ------------------------
 
