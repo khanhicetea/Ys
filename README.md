@@ -20,6 +20,15 @@
 $ docker-composer up -d
 ```
 
+### Heroku
+
+```bash
+$ heroku login
+$ heroku git:remote -a [your-app-id]
+$ git push heroku master
+$ heroku open
+```
+
 ### Manually
 
 **Run Python server**
