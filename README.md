@@ -1,6 +1,6 @@
 # Ys - Youtube Streamer
 
-![Youtube Stream](https://media.giphy.com/media/9A6nyrbZpskCI/giphy.gif)
+![Youtube Stream](https://user-images.githubusercontent.com/4528223/28712757-883662c6-73b6-11e7-90b8-8ad36a94390e.gif)
 
 ------------------------
 
